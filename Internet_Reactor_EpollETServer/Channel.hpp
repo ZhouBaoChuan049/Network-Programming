@@ -29,6 +29,7 @@ const int MAX_RECVBUFFER = 4096;
                 int n = recv(_sockfd->GetSockFd(), RecvBuffer.data(), sizeof(RecvBuffer), 0);
                 if(n > 0)
                 {
+                    RecvBuffer.resize(n);
                     _inbuffer += RecvBuffer ;
                     LOG(LEVEL::INFO)<<"读取数据成功"<<CAGE;
                 }
@@ -63,7 +64,7 @@ const int MAX_RECVBUFFER = 4096;
         {
             while(true)
             {
-                int n = send(_sockfd->GetSockFd() , _outbuffer.data() , sizeof(_outbuffer), 0);
+                int n = send(_sockfd->GetSockFd() , _outbuffer.data() , _outbuffer.size(), 0);
                 if(n > 0)
                 {
                     _outbuffer.erase(0, n);

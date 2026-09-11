@@ -184,6 +184,11 @@ namespace ProtocolModule
                     }
                     LOG(LEVEL::DEBUG) << "GetRespone: decode结束" << CAGE;
                 }
+                else if(n == 0)
+                {
+                    LOG(LEVEL::INFO) << "服务器已关闭连接" << CAGE;
+                    return;
+                }
             }
         }
         std::string Execute(std::string RequestString)
@@ -193,7 +198,7 @@ namespace ProtocolModule
             Respone resp ;
             resp = _work(request);
             std::string RespString = resp.Serialize();
-            return RespString ;
+            return encode(RespString) ;
         }
         std::string BulidRequestString(int x, int y, char oper)
         {
