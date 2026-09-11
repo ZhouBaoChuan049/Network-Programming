@@ -99,12 +99,12 @@ namespace ProtocolModule
         {
             return std::to_string(JsonString.size()) + SEP + JsonString + SEP;
         }
-        bool decode(std::string JsonString, std::string *request)
+        bool decode(std::string* JsonString, std::string *request)
         {
-            int pos = JsonString.find(SEP);
+            int pos = (*JsonString).find(SEP);
             if (pos == std::string::npos)
                 return false;
-            std::string StringLength = JsonString.substr(0, pos);
+            std::string StringLength = (*JsonString).substr(0, pos);
             if(StringLength.empty())
                 return false ;
             for(auto e : StringLength)
@@ -112,10 +112,10 @@ namespace ProtocolModule
                     return false ;
             int Length = stoi(StringLength);      // 报文长度
             int LengthSize = StringLength.size(); // 报文长度的长度
-            if ((LengthSize + 2 * SEP.size() + Length) > JsonString.size())
+            if ((LengthSize + 2 * SEP.size() + Length) > (*JsonString).size())
                 return false;
-            *request = JsonString.substr(LengthSize + SEP.size(), Length);
-            JsonString.erase(0, LengthSize + 2 * SEP.size() + Length);
+            *request = (*JsonString).substr(LengthSize + SEP.size(), Length);
+            (*JsonString).erase(0, LengthSize + 2 * SEP.size() + Length);
             return true;
         }
         void GetRequest(std::shared_ptr<Socket> &sock, InetAddr &client)
@@ -134,7 +134,7 @@ namespace ProtocolModule
                 else if (n > 0)
                 {
                     std::string request;
-                    while (decode(RequestString, &request))
+                    while (decode(&RequestString, &request))
                     {
                         int n = _req.Deserialize(request);
                         if (n)
@@ -160,7 +160,9 @@ namespace ProtocolModule
             {
                 std::string resp;
                 resp.resize(4096);
+                LOG(LEVEL::DEBUG) << "GetRespone: 准备recv" << CAGE;
                 int n = sock->RecvMessage(&resp);
+                LOG(LEVEL::DEBUG) << "GetRespone: 完成recv" << CAGE;
                 if (n == -1)
                 {
                     LOG(LEVEL::ERROR) << "读取响应失败" << CAGE;
@@ -169,7 +171,7 @@ namespace ProtocolModule
                 else if (n > 0)
                 {
                     std::string response;
-                    while (decode(resp, &response))
+                    while (decode(&resp, &response))
                     {
                         bool m = _resp.Deserialize(response);
                         if (m)
@@ -180,6 +182,7 @@ namespace ProtocolModule
                         }
                         return ;
                     }
+                    LOG(LEVEL::DEBUG) << "GetRespone: decode结束" << CAGE;
                 }
             }
         }

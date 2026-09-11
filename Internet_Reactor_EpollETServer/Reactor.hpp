@@ -23,13 +23,13 @@ const int MAX_EVENT = 1024 ;
             return _Connections.find(sockfd) == 
                 _Connections.end() ? false : true;
         }
-        void AddConnection(std::shared_ptr<Connection> conn)
+        bool AddConnection(std::shared_ptr<Connection> conn)
         {
             LOG(LEVEL::DEBUG)<<"到这里了嘛?"<<CAGE;
             if(IsExistInConnections(conn->Getsocketfd()))
             {
                 LOG(LEVEL::INFO)<<"该文件描述符链接已经被维护"<<CAGE ;
-                return ;                
+                return false;                
             }
             else
             {
@@ -45,6 +45,7 @@ const int MAX_EVENT = 1024 ;
                 conn->SetOwner(this);
             }
             PrintConnections();
+            return true;
         }
         void DelConnection(int sockfd)
         {
@@ -82,7 +83,6 @@ const int MAX_EVENT = 1024 ;
         }
         void Dispatcher(int n)
         {
-            
             if(n <= 0)
                 return ;
             for(int i =0; i < n; i ++)

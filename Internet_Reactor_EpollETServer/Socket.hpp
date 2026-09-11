@@ -84,7 +84,7 @@ namespace SocketModule
                               peer.GetSockLine());
             if (n == -1)
             {
-                LOG(LEVEL::FATAL) << "客户端连接服务器失败！" << CAGE;
+                LOG(LEVEL::INFO) << "客户端连接服务器失败！" << CAGE;
                 exit(CONNECT__ERR);
             }
             return true;
@@ -96,8 +96,8 @@ namespace SocketModule
             int _sockfd = accept(_listensockfd, (sockaddr *)&peer, &len);
             if (_sockfd < 0)
             {
-                LOG(LEVEL::FATAL) << "服务器获取连接失败！" << CAGE;
-                exit(ACCEPT_ERR);
+                LOG(LEVEL::FATAL) << "服务器暂未获取连接" << CAGE;
+                return -1;
             }
             client.SetAddr(peer);
             return _sockfd;

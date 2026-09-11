@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     });
     std::shared_ptr<Connection> conn = std::make_shared<Listener>(port);
     conn->SetCallBackFunc(
-        [&protocol](std::string inbuffer)->std::string{
+        [&protocol](std::string* inbuffer)->std::string{
             std::string response;
             while(true)
             {

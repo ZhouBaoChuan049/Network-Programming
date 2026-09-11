@@ -50,8 +50,11 @@ const int MAX_RECVBUFFER = 4096;
             }
             if(_outbuffer.empty())
             {
-                _outbuffer = _func(_inbuffer) ;
-                _inbuffer.clear();
+                LOG(LEVEL::DEBUG)<<"将要执行 回调处理"<<CAGE;
+                if(_func != nullptr)
+                    _outbuffer += _func(&_inbuffer) ;
+                LOG(LEVEL::DEBUG)<<"回调处理结束"<<CAGE;
+                //_inbuffer.clear();
             }
             if(!_outbuffer.empty())
                 Send();
@@ -80,11 +83,13 @@ const int MAX_RECVBUFFER = 4096;
             }
             if(!_outbuffer.empty())
             {
-                GetOwner()->TakeCareOfInOut(_sockfd->GetSockFd() , 0 , EPOLLOUT);
+                LOG(LEVEL::DEBUG)<<"修改"<<CAGE;
+                GetOwner()->TakeCareOfInOut(_sockfd->GetSockFd() , EPOLLIN , EPOLLOUT);
             }
             else if(_outbuffer.empty())
             {
-                GetOwner()->TakeCareOfInOut(_sockfd->GetSockFd() , 0 , 0);
+                LOG(LEVEL::DEBUG)<<"恢复"<<CAGE;
+                GetOwner()->TakeCareOfInOut(_sockfd->GetSockFd() , EPOLLIN , 0);
             }
         }
         void Exceptor()

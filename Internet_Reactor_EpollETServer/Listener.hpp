@@ -44,12 +44,12 @@ namespace ListenerModule
                 InetAddr client ;
                 int sockfd = _listensocketfd->AcceptSocket(client);
                 //LOG(LEVEL::DEBUG)<<"到这里了没有？"<<sockfd<<CAGE;
-                if(errno & EAGAIN || errno | EWOULDBLOCK)
+                if(errno == EAGAIN || errno == EWOULDBLOCK)
                 {
                     LOG(LEVEL::DEBUG)<<"到这里了嘛?"<<CAGE;
                     break ;
                 }
-                if(errno & EINTR)
+                if(errno == EINTR)
                 {
                     LOG(LEVEL::DEBUG)<<"到这里了嘛?"<<CAGE;
                     continue ;
@@ -62,7 +62,9 @@ namespace ListenerModule
                     channel->SetEvent(EPOLLIN|EPOLLET);
                     int flag = fcntl(channel->Getsocketfd() , F_GETFL,0);
                     fcntl(channel->Getsocketfd(),F_SETFL ,flag|O_NONBLOCK);
-                    GetOwner()->AddConnection(channel);
+                    channel->SetCallBackFunc(_func);
+                    bool ret = GetOwner()->AddConnection(channel);
+                    if(ret == true) break;
                 }
                 else 
                 {

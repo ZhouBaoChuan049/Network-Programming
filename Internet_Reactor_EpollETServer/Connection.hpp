@@ -7,7 +7,7 @@ namespace ReactorModule
     class Reactor ;
 }
 
-using _CallBackFunc = std::function<std::string(std::string)> ;
+using _CallBackFunc = std::function<std::string(std::string*)> ;
 namespace ConnectionModule
 {
     class Connection
