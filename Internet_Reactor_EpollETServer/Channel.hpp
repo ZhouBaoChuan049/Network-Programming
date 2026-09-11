@@ -26,7 +26,7 @@ const int MAX_RECVBUFFER = 4096;
             while(true)
             {
                 std::string RecvBuffer(MAX_RECVBUFFER , '\0') ;
-                int n = recv(_sockfd->GetSockFd(), RecvBuffer.data(), sizeof(RecvBuffer), 0);
+                int n = recv(_sockfd->GetSockFd(), RecvBuffer.data(), RecvBuffer.size(), 0);
                 if(n > 0)
                 {
                     RecvBuffer.resize(n);
@@ -37,7 +37,7 @@ const int MAX_RECVBUFFER = 4096;
                 {
                     LOG(LEVEL::INFO)<<"对端已关闭连接"<<CAGE;
                     Exceptor() ;
-                    break;
+                    return ;
                 }
                 else if(errno == EAGAIN || errno == EWOULDBLOCK)
                     break ;
